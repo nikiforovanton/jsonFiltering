@@ -1,0 +1,20 @@
+{
+  "filters" :
+  [
+    {
+      "id": "filter-1",
+      "properties": [
+        "propertyString 123",
+        "propertyArrayString",
+        "propertyArrayObject",
+        "propertyObject.propertyArrayString"
+      ]
+    },
+    {
+      "id": "filter-2",
+      "properties": [
+        "propertyObject123.propertyBoolean"
+      ]
+    }
+  ]
+}

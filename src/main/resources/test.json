@@ -1,0 +1,26 @@
+{
+  "propertyString" : "string",
+  "propertyInt" : 42,
+  "propertyBoolean" : true,
+  "propertyArrayString" : [
+    "one", "two", "three", "four"
+  ],
+  "propertyArrayObject" : [
+    {
+      "str" : "str",
+      "int" : 23
+    },
+    {
+      "str" : "str",
+      "int" : 24
+    }
+  ],
+  "propertyObject" : {
+    "propertyString" : "string",
+    "propertyInt" : 42,
+    "propertyBoolean" : true,
+    "propertyArrayString" : [
+      "one", "two", "three", "four"
+    ]
+  }
+}
