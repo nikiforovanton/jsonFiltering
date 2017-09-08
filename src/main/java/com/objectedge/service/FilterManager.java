@@ -16,6 +16,7 @@ public class FilterManager {
     private FilterRepository filterRepository;
     private FilterProcessor filterProcessor;
 
+    // inject
     public FilterManager(FilterRepository filterRepository, FilterProcessor filterProcessor) {
         this.filterRepository = filterRepository;
         this.filterProcessor = filterProcessor;
@@ -24,11 +25,6 @@ public class FilterManager {
     public FilterManager() throws FileNotFoundException {
         filterRepository = new JsonFilterRepository("./src/main/resources/filter.json");
         filterProcessor = new FilterProcessorImpl();
-    }
-
-    public JSONObject filter(JSONObject src, String filterId) {
-        Objects.requireNonNull(filterId);
-        return filter(src, Collections.singleton(filterId));
     }
 
     public JSONObject filter(JSONObject src, String... filterIds) {
