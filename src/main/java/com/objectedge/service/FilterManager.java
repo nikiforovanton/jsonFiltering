@@ -1,30 +1,34 @@
 package com.objectedge.service;
 
 import com.objectedge.model.Filter;
+import com.objectedge.processor.FilterProcessor;
 import com.objectedge.repository.FilterRepository;
-import com.objectedge.repository.json.JsonFilterRepository;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class FilterManager {
 
     private FilterRepository filterRepository;
-    private FilterProcessor filterProcessor;
+    private Map<String, FilterProcessor> processorMap = new HashMap<>();
 
-    // inject
-    public FilterManager(FilterRepository filterRepository, FilterProcessor filterProcessor) {
+    public FilterManager(FilterRepository filterRepository) {
         this.filterRepository = filterRepository;
-        this.filterProcessor = filterProcessor;
     }
 
-    public FilterManager() throws FileNotFoundException {
-        filterRepository = new JsonFilterRepository("./src/main/resources/filter.json");
-        filterProcessor = new FilterProcessorImpl();
+    public Map<String, FilterProcessor> getProcessorMap() {
+        return processorMap;
+    }
+
+    public void setProcessorMap(Map<String, FilterProcessor> processorMap) {
+        this.processorMap = processorMap;
     }
 
     public JSONObject filter(JSONObject src, String... filterIds) {
@@ -36,21 +40,39 @@ public class FilterManager {
         Objects.requireNonNull(src);
         Objects.requireNonNull(filterIds);
 
-        if (filterIds.isEmpty()) {
+        filterIds = filterIds.stream().filter(Objects::nonNull).collect(Collectors.toList());
+
+        List<Filter> filters = new ArrayList<>();
+        for (String filterId : filterIds) {
+            Filter filter = filterRepository.getById(filterId);
+
+            if (filter != null) {
+                filters.add(filter);
+            } else {
+                System.out.println("WARN\tnot found filter with id: " + filterId);
+            }
+        }
+
+        if (filters.isEmpty()) {
             System.out.println("INFO\tno filters to apply");
             return src;
         }
 
-        JSONObject dest = new JSONObject();
-        for (String filterId : filterIds) {
-            Filter filter = filterRepository.getById(filterId);
+        JSONObject dest = null;
 
-            if (filter == null) {
-                System.out.println("WARN\tnot found filter with id: " + filterId);
-                continue;
+        for (Filter filter : filters) {
+            FilterProcessor processor = processorMap.get(filter.getType());
+
+            if (processor != null) {
+                // initializing destination object with first valid processor.
+                if (dest == null) {
+                    dest = processor.prepareDestinationObject(src, filter);
+                }
+                processor.process(src, dest, filter);
+            } else {
+                System.out.printf("WARN\tnot found processor for filter '%s' with type: %s. " +
+                        "Check configuration of 'processorMap'\n", filter.getId(), filter.getType());
             }
-
-            filterProcessor.process(src, dest, filter);
         }
         return dest;
     }

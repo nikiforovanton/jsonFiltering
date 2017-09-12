@@ -7,47 +7,61 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.util.*;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public class JsonFilterRepository implements FilterRepository {
 
-    private Map<String, Set<String>> filters = new HashMap<>();
+    private static final String JSON_PROP_FILTERS = "filters";
+    private static final String JSON_PROP_ID = "id";
+    private static final String JSON_PROP_TYPE = "type";
+    private static final String JSON_PROP_PROPERTIES = "properties";
 
-    public JsonFilterRepository(String pathToFile) throws FileNotFoundException {
-        JSONArray filters = new JSONObject(new JSONTokener(new FileInputStream(pathToFile))).getJSONArray("filters");
-        for (int index = 0; index < filters.length(); ++index) {
-            JSONObject filter = filters.getJSONObject(index);
-            this.filters.put(filter.getString("id"), new HashSet(filter.getJSONArray("properties").toList()));
+    private Map<String, Filter> filters = new HashMap<>();
+
+    public JsonFilterRepository(String pathToFile) throws IOException {
+
+        try (FileInputStream fis = new FileInputStream(pathToFile)) {
+            JSONArray filters = new JSONObject(new JSONTokener(fis)).optJSONArray(JSON_PROP_FILTERS);
+
+            if (filters != null) {
+                for (int index = 0; index < filters.length(); ++index) {
+                    JSONObject json = filters.getJSONObject(index);
+
+                    String id = json.getString(JSON_PROP_ID);
+                    String type = json.getString(JSON_PROP_TYPE);
+                    Set<String> props = new HashSet<>();
+
+                    JSONArray jsonProps = json.getJSONArray(JSON_PROP_PROPERTIES);
+                    for (int i = 0; i < jsonProps.length(); ++i) {
+                        props.add(jsonProps.getString(i));
+                    }
+
+                    Filter filter = new Filter();
+                    filter.setId(id);
+                    filter.setType(type);
+                    filter.setProperties(props);
+
+                    this.filters.put(id, filter);
+                }
+            }
         }
     }
 
     @Override
     public Filter getById(String id) {
-
-        if (filters.containsKey(id)) {
-            Filter filter = new Filter();
-            filter.setId(id);
-            filter.setProperties(filters.get(id));
-            return filter;
-        }
-        return null;
+        return filters.get(id);
     }
 
     @Override
     public Collection<Filter> getAll() {
-        Set<Filter> filters = new HashSet<>();
-        for (Map.Entry<String, Set<String>> entry : this.filters.entrySet()) {
-            Filter filter = new Filter();
-            filter.setProperties(entry.getValue());
-            filter.setId(entry.getKey());
-            filters.add(filter);
-        }
-        return filters;
+        return filters.values();
     }
 
     @Override
-    public void save(Filter filter) {
-
-    }
+    public void save(Filter filter) {}
 }

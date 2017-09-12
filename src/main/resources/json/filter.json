@@ -3,6 +3,7 @@
   [
     {
       "id": "filter-1",
+      "type" : "exclude",
       "properties": [
         "propertyString 123",
         "propertyArrayString",
@@ -12,8 +13,9 @@
     },
     {
       "id": "filter-2",
+      "type" : "include",
       "properties": [
-        "propertyObject123.propertyBoolean"
+        "propertyObject.propertyBoolean"
       ]
     }
   ]

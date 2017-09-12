@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="filterRepository" class="com.objectedge.repository.json.JsonFilterRepository">
+        <constructor-arg value="./src/main/resources/json/filter.json"/>
+    </bean>
+
+    <bean id="includeProcessor" class="com.objectedge.processor.FilterIncludeProcessor"/>
+    <bean id="excludeProcessor" class="com.objectedge.processor.FilterExcludeProcessor"/>
+
+    <bean id="filterManager" class="com.objectedge.service.FilterManager">
+        <constructor-arg ref="filterRepository"/>
+        <property name="processorMap">
+            <map>
+                <entry key="include" value-ref="includeProcessor"/>
+                <entry key="exclude" value-ref="excludeProcessor"/>
+            </map>
+        </property>
+    </bean>
+</beans>

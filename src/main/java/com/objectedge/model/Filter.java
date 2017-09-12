@@ -6,6 +6,7 @@ public class Filter {
 
     private String id;
     private Set<String> properties;
+    private String type;
 
     public String getId() {
         return id;
@@ -21,6 +22,14 @@ public class Filter {
 
     public void setProperties(Set<String> properties) {
         this.properties = properties;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     @Override
@@ -40,9 +49,11 @@ public class Filter {
 
     @Override
     public String toString() {
-        return "Filter{" +
-                "id='" + id + '\'' +
-                ", properties=" + properties +
-                '}';
+        final StringBuilder sb = new StringBuilder("Filter{");
+        sb.append("id='").append(id).append('\'');
+        sb.append(", properties=").append(properties);
+        sb.append(", type=").append(type);
+        sb.append('}');
+        return sb.toString();
     }
 }

@@ -1,13 +1,18 @@
-package com.objectedge.service;
+package com.objectedge.processor;
 
 import com.objectedge.model.Filter;
 import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class FilterProcessorImpl implements FilterProcessor {
+public class FilterIncludeProcessor implements FilterProcessor {
 
     private static final String DOT = ".";
+
+    @Override
+    public JSONObject prepareDestinationObject(JSONObject src, Filter filter) {
+        return new JSONObject();
+    }
 
     public void process(JSONObject src, JSONObject dest, Filter filter) {
         Objects.requireNonNull(src);
@@ -25,15 +30,12 @@ public class FilterProcessorImpl implements FilterProcessor {
         int dotIndex = prop.indexOf(DOT);
 
         if (dotIndex < 0) {
-            // TODO: how to apply multiple filters???
-            //if (!dest.has(prop)) {
-                Object propValue = src.opt(prop);
-                if (propValue != null) {
-                    dest.put(prop, propValue);
-                } else {
-                    System.out.println("WARN\tno such property: " + prop);
-                }
-            //}
+            Object propValue = src.opt(prop);
+            if (propValue != null) {
+                dest.put(prop, propValue);
+            } else {
+                System.out.println("DEBUG\tno such property: " + prop);
+            }
         } else {
             String subProp = prop.substring(0, dotIndex);
 
@@ -46,7 +48,7 @@ public class FilterProcessorImpl implements FilterProcessor {
 
                 processProperty(subSrc, subDest, prop.substring(dotIndex + 1));
             } else {
-                System.out.println("WARN\tno such property: " + prop);
+                System.out.println("DEBUG\tno such property: " + prop);
             }
         }
     }
