@@ -62,6 +62,21 @@ public class JsonFilterRepository implements FilterRepository {
         return filters.values();
     }
 
-    @Override
-    public void save(Filter filter) {}
+	@Override
+	public void create(Filter filter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void update(Filter filter) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remove(String id) {
+		// TODO Auto-generated method stub
+		
+	}
 }

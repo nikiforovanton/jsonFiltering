@@ -8,5 +8,7 @@ public interface FilterRepository {
 
     Filter getById(String id);
     Collection<Filter> getAll();
-    void save(Filter filter);
+    void create(Filter filter);
+    void update(Filter filter);
+    void remove(String id);
 }

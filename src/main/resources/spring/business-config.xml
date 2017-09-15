@@ -4,7 +4,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <bean id="filterRepository" class="com.objectedge.repository.json.JsonFilterRepository">
-        <constructor-arg value="./src/main/resources/json/filter.json"/>
+        <constructor-arg value="E:\dev\json\src\main\resources\json\filter.json"/>
     </bean>
 
     <bean id="includeProcessor" class="com.objectedge.processor.FilterIncludeProcessor"/>
